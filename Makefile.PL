@@ -10,7 +10,8 @@ WriteMakefile
           'PREREQ_PM' => {
                            'Test::More' => 0,
                            'POE::Component::NonBlockingWrapper::Base' => '0.002',
-                           'WWW::Lipsum' => '0.2'
+                           'WWW::Lipsum' => '0.2',
+                           'POE' => '0.9999'
                          }
         )
 ;

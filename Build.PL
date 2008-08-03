@@ -11,6 +11,7 @@ my $builder = Module::Build->new(
         'Test::More' => 0,
     },
     requires => {
+        'POE'  => 0.9999,
         'POE::Component::NonBlockingWrapper::Base' => 0.002,
         'WWW::Lipsum'                              => 0.2,
     },

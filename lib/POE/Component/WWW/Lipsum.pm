@@ -3,7 +3,7 @@ package POE::Component::WWW::Lipsum;
 use warnings;
 use strict;
 
-our $VERSION = '0.0101';
+our $VERSION = '0.0102';
 
 use POE;
 use base 'POE::Component::NonBlockingWrapper::Base';
