@@ -18,7 +18,7 @@ sub _start {
             args  => {
                 amount => 5,
                 what   => 'paras',
-                start  => 'no',
+                start  => 0,
                 html   => 1,
             },
         }
@@ -29,6 +29,6 @@ sub lipsum {
     my $in_ref = $_[ARG0];
 
     print "$_\n" for @{ $in_ref->{lipsum} };
-    
+
     $poco->shutdown;
 }

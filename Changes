@@ -1,8 +1,12 @@
 Revision history for POE-Component-WWW-Lipsum
 
-0.0102  August 3, 2008
-        Added the missing 'POE' as prerequisite
+1.001001  2014-01-27
+        - Converted to dzil
+        - Updated to work properly with the updated WWW::Lipsum
 
-0.0101  August 2, 2008
-        First version, released on an unsuspecting world.
+0.0102  2008-08-03
+        - Added the missing 'POE' as prerequisite
+
+0.0101  2008-08-02
+        - First version, released on an unsuspecting world.
 

@@ -1,57 +1,8 @@
-package POE::Component::WWW::Lipsum;
-
-use warnings;
-use strict;
-
-our $VERSION = '1.001001'; # VERSION
-
-use POE;
-use base 'POE::Component::NonBlockingWrapper::Base';
-use WWW::Lipsum;
-
-sub _methods_define {
-    return ( generate => '_wheel_entry' );
-}
-
-sub generate {
-    $poe_kernel->post( shift->{session_id} => generate => @_ );
-}
-
-sub _prepare_wheel {
-    my $self = shift;
-    $self->{obj} = WWW::Lipsum->new;
-}
-
-sub _process_request {
-    my ( $self, $req_ref ) = @_;
-
-    eval {
-        $req_ref->{lipsum} = [
-            $self->{obj}->generate( %{ $req_ref->{args} } )
-        ];
-    };
-    if ( $@ ) {
-        $req_ref->{lipsum} = [ "Error: $@" ];
-    }
-
-    if ( substr($req_ref->{lipsum}[0], 0, 5) eq 'Error' ) {
-        $req_ref->{error} = $req_ref->{lipsum}[0];
-        delete $req_ref->{lipsum};
-    }
-}
-
-1;
-__END__
-
-=encoding utf8
-
-=for stopwords Ipsum Lorem lipsum
-
-=head1 NAME
+# NAME
 
 POE::Component::WWW::Lipsum - non-blocking wrapper around WWW::Lipsum
 
-=head1 SYNOPSIS
+# SYNOPSIS
 
     use strict;
     use warnings;
@@ -87,14 +38,14 @@ POE::Component::WWW::Lipsum - non-blocking wrapper around WWW::Lipsum
 
     # Using event based interface is also possible of course.
 
-=head1 DESCRIPTION
+# DESCRIPTION
 
-The module is a non-blocking wrapper around L<WWW::Lipsum>
-which provides interface to retrieve lipsum text from L<http://lipsum.com/>
+The module is a non-blocking wrapper around [WWW::Lipsum](https://metacpan.org/pod/WWW::Lipsum)
+which provides interface to retrieve lipsum text from [http://lipsum.com/](http://lipsum.com/)
 
-=head1 CONSTRUCTOR
+# CONSTRUCTOR
 
-=head2 C<spawn>
+## `spawn`
 
     my $poco = POE::Component::WWW::Lipsum->spawn;
 
@@ -108,17 +59,17 @@ which provides interface to retrieve lipsum text from L<http://lipsum.com/>
         debug => 1, # output some debug info
     );
 
-The C<spawn> method returns a
+The `spawn` method returns a
 POE::Component::WWW::Lipsum object. It takes a few arguments,
-I<all of which are optional>. The possible arguments are as follows:
+_all of which are optional_. The possible arguments are as follows:
 
-=head3 C<alias>
+### `alias`
 
     ->spawn( alias => 'lipsum' );
 
-B<Optional>. Specifies a POE Kernel alias for the component.
+__Optional__. Specifies a POE Kernel alias for the component.
 
-=head3 C<options>
+### `options`
 
     ->spawn(
         options => {
@@ -127,21 +78,21 @@ B<Optional>. Specifies a POE Kernel alias for the component.
         },
     );
 
-B<Optional>.
+__Optional__.
 A hashref of POE Session options to pass to the component's session.
 
-=head3 C<debug>
+### `debug`
 
     ->spawn(
         debug => 1
     );
 
-When set to a true value turns on output of debug messages. B<Defaults to:>
-C<0>.
+When set to a true value turns on output of debug messages. __Defaults to:__
+`0`.
 
-=head1 METHODS
+# METHODS
 
-=head2 C<generate>
+## `generate`
 
     $poco->generate( {
             event       => 'event_for_output',
@@ -157,23 +108,23 @@ C<0>.
     );
 
 Takes a hashref as an argument, does not return a sensible return value.
-See C<generate> event's description for more information.
+See `generate` event's description for more information.
 
-=head2 C<session_id>
+## `session_id`
 
     my $poco_id = $poco->session_id;
 
 Takes no arguments. Returns component's session ID.
 
-=head2 C<shutdown>
+## `shutdown`
 
     $poco->shutdown;
 
 Takes no arguments. Shuts down the component.
 
-=head1 ACCEPTED EVENTS
+# ACCEPTED EVENTS
 
-=head2 C<generate>
+## `generate`
 
     $poe_kernel->post( lipsum => generate => {
             event       => 'event_for_output',
@@ -189,17 +140,17 @@ Takes no arguments. Shuts down the component.
     );
 
 Instructs the component to fetch some Lorem Ipsum text
-from L<http://lipsum.com/>. Takes a hashref as an
+from [http://lipsum.com/](http://lipsum.com/). Takes a hashref as an
 argument, the possible keys/value of that hashref are as follows:
 
-=head3 C<event>
+### `event`
 
     { event => 'results_event', }
 
-B<Mandatory>. Specifies the name of the event to emit when results are
+__Mandatory__. Specifies the name of the event to emit when results are
 ready. See OUTPUT section for more information.
 
-=head3 C<args>
+### `args`
 
     {
         args => {
@@ -210,11 +161,11 @@ ready. See OUTPUT section for more information.
         },
     }
 
-B<Mandatory>. The C<args> key takes a hashref as its value. This hashref
-will be directly dereferenced into L<WWW::Lipsum> C<generate()> method.
-See documentation for L<WWW::Lipsum> for possible arguments.
+__Mandatory__. The `args` key takes a hashref as its value. This hashref
+will be directly dereferenced into [WWW::Lipsum](https://metacpan.org/pod/WWW::Lipsum) `generate()` method.
+See documentation for [WWW::Lipsum](https://metacpan.org/pod/WWW::Lipsum) for possible arguments.
 
-=head3 C<session>
+### `session`
 
     { session => 'other' }
 
@@ -222,26 +173,26 @@ See documentation for L<WWW::Lipsum> for possible arguments.
 
     { session => $other_session_ID }
 
-B<Optional>. Takes either an alias, reference or an ID of an alternative
+__Optional__. Takes either an alias, reference or an ID of an alternative
 session to send output to.
 
-=head3 user defined
+### user defined
 
     {
         _user    => 'random',
         _another => 'more',
     }
 
-B<Optional>. Any keys starting with C<_> (underscore) will not affect the
+__Optional__. Any keys starting with `_` (underscore) will not affect the
 component and will be passed back in the result intact.
 
-=head2 C<shutdown>
+## `shutdown`
 
     $poe_kernel->post( lipsum => 'shutdown' );
 
 Takes no arguments. Tells the component to shut itself down.
 
-=head1 OUTPUT
+# OUTPUT
 
     $VAR1 = {
         'args' => {
@@ -258,11 +209,11 @@ Takes no arguments. Tells the component to shut itself down.
     };
 
 The event handler set up to handle the event which you've specified in
-the C<event> argument to C<generate()> method/event will receive input
-in the C<$_[ARG0]> in a form of a hashref. The possible keys/value of
+the `event` argument to `generate()` method/event will receive input
+in the `$_[ARG0]` in a form of a hashref. The possible keys/value of
 that hashref are as follows:
 
-=head2 C<lipsum>
+## `lipsum`
 
     {
         'lipsum' => [
@@ -271,25 +222,25 @@ that hashref are as follows:
         ],
     }
 
-The C<lipsum> key will contain an I<arrayref> elements of which will be
-the generated Lorem Ipsum text. Note: if an error occurred the C<lipsum>
-key will B<not> be present. See C<error> below.
+The `lipsum` key will contain an _arrayref_ elements of which will be
+the generated Lorem Ipsum text. Note: if an error occurred the `lipsum`
+key will __not__ be present. See `error` below.
 
-=head2 C<error>
+## `error`
 
     {
         'error' => 'Error: message',
     },
 
-In case of an error the L<lipsum> key will not be present and an
-C<error> key will be present instead which will contain an error
-message describing the problem. B<Note:> at the time of this
+In case of an error the [lipsum](https://metacpan.org/pod/lipsum) key will not be present and an
+`error` key will be present instead which will contain an error
+message describing the problem. __Note:__ at the time of this
 writing there is a minor
-bug in L<WWW::Lipsum> due to which any errors related to
-L<LWP::UserAgent> will not return an appropriate error message, just
+bug in [WWW::Lipsum](https://metacpan.org/pod/WWW::Lipsum) due to which any errors related to
+[LWP::UserAgent](https://metacpan.org/pod/LWP::UserAgent) will not return an appropriate error message, just
 the text "Error: ". The bug report has been posted and may be fixed already.
 
-=head2 C<args>
+## `args`
 
         'args' => {
             'amount' => 2,
@@ -298,42 +249,40 @@ the text "Error: ". The bug report has been posted and may be fixed already.
             'start' => 0,
         },
 
-The C<args> key will contain the same hashref that you passed to
-C<generate()> event/method C<args> argument.
+The `args` key will contain the same hashref that you passed to
+`generate()` event/method `args` argument.
 
-=head2 user defined
+## user defined
 
     { '_blah' => 'foos' }
 
-Any arguments beginning with C<_> (underscore) passed into the C<generate()>
+Any arguments beginning with `_` (underscore) passed into the `generate()`
 event/method will be present intact in the result.
 
-=head1 SEE ALSO
+# SEE ALSO
 
-L<POE>, L<WWW::Lipsum>
+[POE](https://metacpan.org/pod/POE), [WWW::Lipsum](https://metacpan.org/pod/WWW::Lipsum)
 
 head1 REPOSITORY
 
 Fork this module on GitHub:
-L<https://github.com/zoffixznet/WWW-Lipsum>
+[https://github.com/zoffixznet/WWW-Lipsum](https://github.com/zoffixznet/WWW-Lipsum)
 
-=head1 BUGS
+# BUGS
 
 To report bugs or request features, please use
-L<https://github.com/zoffixznet/WWW-Lipsum/issues>
+[https://github.com/zoffixznet/WWW-Lipsum/issues](https://github.com/zoffixznet/WWW-Lipsum/issues)
 
 If you can't access GitHub, you can email your request
-to C<bug-www-lipsum at rt.cpan.org>
+to `bug-www-lipsum at rt.cpan.org`
 
-=head1 AUTHOR
+# AUTHOR
 
 Zoffix Znet <zoffix at cpan.org>
-(L<http://zoffix.com/>, L<http://haslayout.net/>)
+([http://zoffix.com/](http://zoffix.com/), [http://haslayout.net/](http://haslayout.net/))
 
-=head1 LICENSE
+# LICENSE
 
 You can use and distribute this module under the same terms as Perl itself.
-See the C<LICENSE> file included in this distribution for complete
+See the `LICENSE` file included in this distribution for complete
 details.
-
-=cut
